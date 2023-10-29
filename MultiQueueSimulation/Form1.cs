@@ -22,7 +22,7 @@ namespace MultiQueueSimulation
         public TimeDistribution interArrivalDistribution;
         SimulationSystem system = new SimulationSystem();
 
-
+        private List<string> InterarrivalTime = new List<string>();
         public Form1()
         {
             InitializeComponent();
@@ -54,6 +54,21 @@ namespace MultiQueueSimulation
             return Decimal.Parse(inter_prop.Text);
         }
 
+
+        public int GetInterarrivalTimeForServer()
+        {
+            return Int32.Parse(serviceTimeServer.Text);
+        }
+
+        public decimal GetInterarrivalPropForServer()
+        {
+            return Decimal.Parse(probabilityServer.Text);
+        }
+
+
+
+
+
         public TimeDistribution GetTimeDistribution()
         {
             return interArrivalDistribution;
@@ -70,11 +85,18 @@ namespace MultiQueueSimulation
             interArrivalDistribution.CummProbability = cummulativeProp;
             interArrivalDistribution.MaxRange = Convert.ToInt32(cummulativeProp * 100);
             system.InterarrivalDistribution.Add(interArrivalDistribution);
+
+            listBox1.Items.Add(GetInterarrivalTime());
+            listBox2.Items.Add(GetInterarrivalProp());
+
+            inter_time.Clear();
+            inter_prop.Clear();
         }
 
         private void clear_Click(object sender, EventArgs e)
         {
-
+            system.InterarrivalDistribution.Clear();
+            MessageBox.Show("Data cleared", "Information message", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void groupBox1_Enter(object sender, EventArgs e)
@@ -85,6 +107,30 @@ namespace MultiQueueSimulation
         public SimulationSystem GetSystem ()
         {
             return system;
+        }
+
+        private void groupBox2_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            decimal cummulativeProp = 1;
+            TimeDistribution interArrivalDistribution = new TimeDistribution();
+            interArrivalDistribution.Time = GetInterarrivalTime();
+            interArrivalDistribution.Probability = GetInterarrivalProp();
+            interArrivalDistribution.MinRange = Convert.ToInt32(cummulativeProp * 100);
+            cummulativeProp += GetInterarrivalProp();
+            interArrivalDistribution.CummProbability = cummulativeProp;
+            interArrivalDistribution.MaxRange = Convert.ToInt32(cummulativeProp * 100);
+            system.InterarrivalDistribution.Add(interArrivalDistribution);
+
+            listBox3.Items.Add(GetInterarrivalTimeForServer());
+            listBox4.Items.Add(GetInterarrivalPropForServer());
+
+            serviceTimeServer.Clear();
+            probabilityServer.Clear();
         }
     }
 }
