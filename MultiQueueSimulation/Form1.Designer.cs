@@ -28,22 +28,125 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.add = new System.Windows.Forms.Button();
+            this.clear = new System.Windows.Forms.Button();
+            this.inter_prop = new System.Windows.Forms.TextBox();
+            this.inter_time = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // add
+            // 
+            this.add.Location = new System.Drawing.Point(133, 90);
+            this.add.Name = "add";
+            this.add.Size = new System.Drawing.Size(75, 23);
+            this.add.TabIndex = 0;
+            this.add.Text = "Add";
+            this.add.UseVisualStyleBackColor = true;
+            this.add.Click += new System.EventHandler(this.add_Click);
+            // 
+            // clear
+            // 
+            this.clear.Location = new System.Drawing.Point(52, 90);
+            this.clear.Name = "clear";
+            this.clear.Size = new System.Drawing.Size(75, 23);
+            this.clear.TabIndex = 1;
+            this.clear.Text = "Clear";
+            this.clear.UseVisualStyleBackColor = true;
+            this.clear.Click += new System.EventHandler(this.clear_Click);
+            // 
+            // inter_prop
+            // 
+            this.inter_prop.Location = new System.Drawing.Point(118, 64);
+            this.inter_prop.Name = "inter_prop";
+            this.inter_prop.Size = new System.Drawing.Size(100, 20);
+            this.inter_prop.TabIndex = 2;
+            // 
+            // inter_time
+            // 
+            this.inter_time.Location = new System.Drawing.Point(118, 38);
+            this.inter_time.Name = "inter_time";
+            this.inter_time.Size = new System.Drawing.Size(100, 20);
+            this.inter_time.TabIndex = 3;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(15, 11);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(173, 24);
+            this.label4.TabIndex = 4;
+            this.label4.Text = "Interarrival values";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(5, 38);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(89, 18);
+            this.label5.TabIndex = 5;
+            this.label5.Text = "Service time";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(5, 64);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(76, 18);
+            this.label6.TabIndex = 6;
+            this.label6.Text = "Probability";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.label6);
+            this.groupBox1.Controls.Add(this.label5);
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.inter_time);
+            this.groupBox1.Controls.Add(this.inter_prop);
+            this.groupBox1.Controls.Add(this.clear);
+            this.groupBox1.Controls.Add(this.add);
+            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(240, 127);
+            this.groupBox1.TabIndex = 7;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Interarrival";
+            this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(212, 206);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ClientSize = new System.Drawing.Size(524, 456);
+            this.Controls.Add(this.groupBox1);
             this.Name = "Form1";
-            this.Text = "Form1";
-            this.Load += new System.EventHandler(this.Form1_Load);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
+
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox inter_prob;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox inter_service_time;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button add;
+        private System.Windows.Forms.Button clear;
+        private System.Windows.Forms.TextBox inter_prop;
+        private System.Windows.Forms.TextBox inter_time;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.GroupBox groupBox1;
     }
 }
 
