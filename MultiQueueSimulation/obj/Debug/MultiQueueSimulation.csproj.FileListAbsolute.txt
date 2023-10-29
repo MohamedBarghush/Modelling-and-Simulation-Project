@@ -110,3 +110,17 @@ D:\College\Projects\Modelling-and-Simulation-Project\MultiQueueSimulation\obj\De
 D:\College\Projects\Modelling-and-Simulation-Project\MultiQueueSimulation\obj\Debug\MultiQueueSimulation.csproj.CopyComplete
 D:\College\Projects\Modelling-and-Simulation-Project\MultiQueueSimulation\obj\Debug\MultiQueueSimulation.exe
 D:\College\Projects\Modelling-and-Simulation-Project\MultiQueueSimulation\obj\Debug\MultiQueueSimulation.pdb
+C:\Users\lenovo\Desktop\My-Github\Modelling-and-Simulation-Project\MultiQueueSimulation\bin\Debug\MultiQueueSimulation.exe.config
+C:\Users\lenovo\Desktop\My-Github\Modelling-and-Simulation-Project\MultiQueueSimulation\bin\Debug\MultiQueueSimulation.exe
+C:\Users\lenovo\Desktop\My-Github\Modelling-and-Simulation-Project\MultiQueueSimulation\bin\Debug\MultiQueueSimulation.pdb
+C:\Users\lenovo\Desktop\My-Github\Modelling-and-Simulation-Project\MultiQueueSimulation\bin\Debug\MultiQueueModels.dll
+C:\Users\lenovo\Desktop\My-Github\Modelling-and-Simulation-Project\MultiQueueSimulation\bin\Debug\MultiQueueModels.pdb
+C:\Users\lenovo\Desktop\My-Github\Modelling-and-Simulation-Project\MultiQueueSimulation\obj\Debug\MultiQueueSimulation.csproj.AssemblyReference.cache
+C:\Users\lenovo\Desktop\My-Github\Modelling-and-Simulation-Project\MultiQueueSimulation\obj\Debug\MultiQueueSimulation.csproj.SuggestedBindingRedirects.cache
+C:\Users\lenovo\Desktop\My-Github\Modelling-and-Simulation-Project\MultiQueueSimulation\obj\Debug\MultiQueueSimulation.Form1.resources
+C:\Users\lenovo\Desktop\My-Github\Modelling-and-Simulation-Project\MultiQueueSimulation\obj\Debug\MultiQueueSimulation.Properties.Resources.resources
+C:\Users\lenovo\Desktop\My-Github\Modelling-and-Simulation-Project\MultiQueueSimulation\obj\Debug\MultiQueueSimulation.csproj.GenerateResource.cache
+C:\Users\lenovo\Desktop\My-Github\Modelling-and-Simulation-Project\MultiQueueSimulation\obj\Debug\MultiQueueSimulation.csproj.CoreCompileInputs.cache
+C:\Users\lenovo\Desktop\My-Github\Modelling-and-Simulation-Project\MultiQueueSimulation\obj\Debug\MultiQueueSimulation.csproj.CopyComplete
+C:\Users\lenovo\Desktop\My-Github\Modelling-and-Simulation-Project\MultiQueueSimulation\obj\Debug\MultiQueueSimulation.exe
+C:\Users\lenovo\Desktop\My-Github\Modelling-and-Simulation-Project\MultiQueueSimulation\obj\Debug\MultiQueueSimulation.pdb

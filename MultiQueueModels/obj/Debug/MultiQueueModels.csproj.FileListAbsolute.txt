@@ -46,3 +46,9 @@ D:\College\Projects\Modelling-and-Simulation-Project\MultiQueueModels\obj\Debug\
 D:\College\Projects\Modelling-and-Simulation-Project\MultiQueueModels\obj\Debug\MultiQueueModels.csproj.CoreCompileInputs.cache
 D:\College\Projects\Modelling-and-Simulation-Project\MultiQueueModels\obj\Debug\MultiQueueModels.dll
 D:\College\Projects\Modelling-and-Simulation-Project\MultiQueueModels\obj\Debug\MultiQueueModels.pdb
+C:\Users\lenovo\Desktop\My-Github\Modelling-and-Simulation-Project\MultiQueueModels\bin\Debug\MultiQueueModels.dll
+C:\Users\lenovo\Desktop\My-Github\Modelling-and-Simulation-Project\MultiQueueModels\bin\Debug\MultiQueueModels.pdb
+C:\Users\lenovo\Desktop\My-Github\Modelling-and-Simulation-Project\MultiQueueModels\obj\Debug\MultiQueueModels.csproj.AssemblyReference.cache
+C:\Users\lenovo\Desktop\My-Github\Modelling-and-Simulation-Project\MultiQueueModels\obj\Debug\MultiQueueModels.csproj.CoreCompileInputs.cache
+C:\Users\lenovo\Desktop\My-Github\Modelling-and-Simulation-Project\MultiQueueModels\obj\Debug\MultiQueueModels.dll
+C:\Users\lenovo\Desktop\My-Github\Modelling-and-Simulation-Project\MultiQueueModels\obj\Debug\MultiQueueModels.pdb
