@@ -19,7 +19,7 @@ namespace MultiQueueSimulation
     {
         public int interArrivalTime;
         public int interArrivalProp;
-        
+
         public TimeDistribution interArrivalDistribution;
         SimulationSystem system = new SimulationSystem();
 
@@ -33,7 +33,7 @@ namespace MultiQueueSimulation
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            
+
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -46,7 +46,7 @@ namespace MultiQueueSimulation
 
         }
 
-        public int GetInterarrivalTime ()
+        public int GetInterarrivalTime()
         {
             return Int32.Parse(inter_time.Text);
         }
@@ -101,7 +101,7 @@ namespace MultiQueueSimulation
 
         }
 
-        public SimulationSystem GetSystem ()
+        public SimulationSystem GetSystem()
         {
             return system;
         }
@@ -129,63 +129,65 @@ namespace MultiQueueSimulation
             serviceTimeServer.Clear();
             probabilityServer.Clear();
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog file = new OpenFileDialog();
-            file.InitialDirectory = @"C:\txt";
-            file.Title = "Open a file to read data";
-            file.Filter = "Text files only (*.txt) | *.txt";
-            file.DefaultExt = "txt";
-
-            if (file.ShowDialog() == DialogResult.OK)
+            private void button2_Click(object sender, EventArgs e)
             {
-                var fileLocation = File.ReadAllLines(file.FileName);
-                List<string> lines = new List<string>(fileLocation);
-                system.NumberOfServers = int.Parse(lines[1]);
-                system.StoppingNumber = int.Parse(lines[4]);
-                system.StoppingCriteria = (Enums.StoppingCriteria)int.Parse(lines[7]);
-                system.SelectionMethod = (Enums.SelectionMethod)int.Parse(lines[10]);
+                OpenFileDialog file = new OpenFileDialog();
+                file.InitialDirectory = @"C:\txt";
+                file.Title = "Open a file to read data";
+                file.Filter = "Text files only (*.txt) | *.txt";
+                file.DefaultExt = "txt";
 
-                decimal cummulativeProb = 0;
-                for (int i = 13; i < 17; i++)
+                if (file.ShowDialog() == DialogResult.OK)
                 {
-                    string[] parts = lines[i].Split(',');
-                    TimeDistribution t = CreateTimeDistribution(int.Parse(parts[0].Trim()), decimal.Parse(parts[1].Trim()), ref cummulativeProb);
-                    system.InterarrivalDistribution.Add(t);
-                }
+                    var fileLocation = File.ReadAllLines(file.FileName);
+                    List<string> lines = new List<string>(fileLocation);
+                    system.NumberOfServers = int.Parse(lines[1]);
+                    system.StoppingNumber = int.Parse(lines[4]);
+                    system.StoppingCriteria = (Enums.StoppingCriteria)int.Parse(lines[7]);
+                    system.SelectionMethod = (Enums.SelectionMethod)int.Parse(lines[10]);
 
-                Dictionary<int, Dictionary<int, double>> serviceDistributions = new Dictionary<int, Dictionary<int, double>>();
-
-                int lineIndex = 19;
-                for (int serverIndex = 1; serverIndex <= system.NumberOfServers; serverIndex++)
-                {
-                    Server myNewServer = new Server();
-                    myNewServer.ID = serverIndex;
-                    cummulativeProb = 0;
-                    while (cummulativeProb < 1 && lineIndex < lines.Count)
+                    decimal cummulativeProb = 0;
+                    for (int i = 13; i < 17; i++)
                     {
-                        string[] parts = lines[lineIndex].Split(',');
+                        string[] parts = lines[i].Split(',');
                         TimeDistribution t = CreateTimeDistribution(int.Parse(parts[0].Trim()), decimal.Parse(parts[1].Trim()), ref cummulativeProb);
-                        myNewServer.TimeDistribution.Add(t);
-                        system.Servers.Add(myNewServer);
-                        lineIndex++;
+                        system.InterarrivalDistribution.Add(t);
                     }
-                    lineIndex += 5;
+
+                    Dictionary<int, Dictionary<int, double>> serviceDistributions = new Dictionary<int, Dictionary<int, double>>();
+
+                    int lineIndex = 19;
+                    for (int serverIndex = 1; serverIndex <= system.NumberOfServers; serverIndex++)
+                    {
+                        Server myNewServer = new Server();
+                        myNewServer.ID = serverIndex;
+                        cummulativeProb = 0;
+                        while (cummulativeProb < 1 && lineIndex < lines.Count)
+                        {
+                            string[] parts = lines[lineIndex].Split(',');
+                            TimeDistribution t = CreateTimeDistribution(int.Parse(parts[0].Trim()), decimal.Parse(parts[1].Trim()), ref cummulativeProb);
+                            myNewServer.TimeDistribution.Add(t);
+                            system.Servers.Add(myNewServer);
+                            lineIndex++;
+                        }
+                        lineIndex += 5;
+                    }
                 }
             }
-        }
 
-        private TimeDistribution CreateTimeDistribution (int Time, decimal Prop, ref decimal CummProbability)
-        {
-            TimeDistribution timeDistribution = new TimeDistribution();
-            timeDistribution.Time = Time;
-            timeDistribution.Probability = Prop;
-            timeDistribution.MinRange = Convert.ToInt32(CummProbability * 100)+1;
-            CummProbability += Prop;
-            timeDistribution.CummProbability = CummProbability;
-            timeDistribution.MaxRange = Convert.ToInt32(CummProbability * 100);
-            return timeDistribution;
+            private TimeDistribution CreateTimeDistribution(int Time, decimal Prop, ref decimal CummProbability)
+            {
+                TimeDistribution timeDistribution = new TimeDistribution();
+                timeDistribution.Time = Time;
+                timeDistribution.Probability = Prop;
+                timeDistribution.MinRange = Convert.ToInt32(CummProbability * 100) + 1;
+                CummProbability += Prop;
+                timeDistribution.CummProbability = CummProbability;
+                timeDistribution.MaxRange = Convert.ToInt32(CummProbability * 100);
+                return timeDistribution;
 
+            }
         }
     }
 }
+
