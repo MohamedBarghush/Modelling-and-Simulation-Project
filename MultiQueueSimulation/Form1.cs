@@ -264,13 +264,14 @@ namespace MultiQueueSimulation
 
         public int MappingInServerlDistribution(int randomNum2, int id) // get service time
         {
-            int indexer = id - 1;
-            for (int i = 0; i < system.Servers[indexer].TimeDistribution.Count; i++)//////// OUT OF RANGE ERROR
+            int indexer = id--;
+            int x = system.Servers[indexer].TimeDistribution.Count;
+            for (int i = 0; i <= x; i++)//////// OUT OF RANGE ERROR
             {
-                if (randomNum2 >= system.Servers[indexer].TimeDistribution[i].MinRange && randomNum2 >= system.Servers[indexer].TimeDistribution[i].MaxRange)
+                if (randomNum2 >= system.Servers[indexer].TimeDistribution[i].MinRange && randomNum2 <= system.Servers[indexer].TimeDistribution[i].MaxRange)
                     return system.Servers[indexer].TimeDistribution[i].Time;
             }
-            return 0;
+            return 1;
         }
 
 
