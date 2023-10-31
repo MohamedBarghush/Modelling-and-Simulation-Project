@@ -12,7 +12,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using MultiQueueModels;
 using MultiQueueTesting;
-
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 namespace MultiQueueSimulation
 {
     public partial class Form1 : Form
@@ -21,7 +22,7 @@ namespace MultiQueueSimulation
         public int interArrivalProp;
 
         public TimeDistribution interArrivalDistribution;
-        SimulationSystem system = new SimulationSystem();
+        public SimulationSystem system = new SimulationSystem();
 
         //decimal cummulativeProp = 0;
 
@@ -168,51 +169,6 @@ namespace MultiQueueSimulation
         {
 
         }
-
-        private void button2_Click(object sender, EventArgs e) // Upload Input File
-        {
-            OpenFileDialog file = new OpenFileDialog();
-            file.InitialDirectory = @"C:\txt";
-            file.Title = "Open a file to read data";
-            file.Filter = "Text files only (*.txt) | *.txt";
-            file.DefaultExt = "txt";
-            if (file.ShowDialog() == DialogResult.OK)
-            {
-                var fileLocation = File.ReadAllLines(file.FileName);
-                List<string> lines = new List<string>(fileLocation);
-                system.NumberOfServers = int.Parse(lines[1]);
-                system.StoppingNumber = int.Parse(lines[4]);
-                system.StoppingCriteria = (Enums.StoppingCriteria)int.Parse(lines[7]);
-                system.SelectionMethod = (Enums.SelectionMethod)int.Parse(lines[10]);
-                decimal cummulativeProb = 0;
-                for (int i = 13; i < 17; i++)
-                {
-                    string[] parts = lines[i].Split(',');
-                    TimeDistribution t = CreateTimeDistribution(int.Parse(parts[0].Trim()), decimal.Parse(parts[1].Trim()), ref cummulativeProb);
-                    system.InterarrivalDistribution.Add(t);
-                }
-
-                Dictionary<int, Dictionary<int, double>> serviceDistributions = new Dictionary<int, Dictionary<int, double>>();
-                cummulativeProb = 0;
-                int lineIndex = 19;
-                for (int serverIndex = 1; serverIndex <= system.NumberOfServers; serverIndex++)
-                {
-                    Server myNewServer = new Server();
-                    myNewServer.ID = serverIndex;
-                    while (system.InterarrivalDistribution[system.InterarrivalDistribution.Count - 1].CummProbability < 1 && lineIndex < lines.Count)
-                    {
-                        string[] parts = lines[lineIndex].Split(',');
-                        TimeDistribution t = CreateTimeDistribution(int.Parse(parts[0].Trim()), decimal.Parse(parts[1].Trim()), ref cummulativeProb);
-                        myNewServer.TimeDistribution.Add(t);
-                        system.Servers.Add(myNewServer);
-                        lineIndex++;
-                    }
-                    lineIndex += 5;
-                }
-            }
-            DrawTable();
-        }
-
         private TimeDistribution CreateTimeDistribution(int Time, decimal Prop, ref decimal CummProbability)
         {
             TimeDistribution timeDistribution = new TimeDistribution();
@@ -224,6 +180,77 @@ namespace MultiQueueSimulation
             timeDistribution.MaxRange = Convert.ToInt32(CummProbability * 100);
             return timeDistribution;
         }
+        public static List<string> FilterLines(List<string> inputLines)
+        {
+            List<string> filteredLines = new List<string>();
+
+            foreach (string line in inputLines)
+            {
+                // Use Regex.IsMatch to check if the line consists of digits only
+                if (Regex.IsMatch(line, @"^\d+$"))
+                {
+                    filteredLines.Add(line);
+                }
+                else if (Regex.IsMatch(line, @"^\d+,\s\d+(\.\d+)?$"))
+                {
+                    // Keep lines with the specified format (e.g., "1, 0.25")
+                    filteredLines.Add(line);
+                }
+            }
+
+            return filteredLines;
+        }
+        private void button2_Click(object sender, EventArgs e) // Upload Input File
+        {
+            OpenFileDialog file = new OpenFileDialog();
+            file.InitialDirectory = @"C:\txt";
+            file.Title = "Open a file to read data";
+            file.Filter = "Text files only (*.txt) | *.txt";
+            file.DefaultExt = "txt";
+            if (file.ShowDialog() == DialogResult.OK)
+            {
+                var fileLocation = File.ReadAllLines(file.FileName);
+                List<string> lines = new List<string>(fileLocation);
+
+                lines = FilterLines(lines);
+
+                system.NumberOfServers = int.Parse(lines[0]);
+                system.StoppingNumber = int.Parse(lines[1]);
+                system.StoppingCriteria = (Enums.StoppingCriteria)int.Parse(lines[2]);
+                system.SelectionMethod = (Enums.SelectionMethod)int.Parse(lines[3]);
+
+                int linesForEachDistribution = (lines.Count-3) /(system.NumberOfServers+1);
+
+                decimal cummulativeProb = 0;
+                for (int i = 4; i < 8; i++)
+                {
+                    string[] parts = lines[i].Split(',');
+                    TimeDistribution t = CreateTimeDistribution(int.Parse(parts[0].Trim()), decimal.Parse(parts[1].Trim()), ref cummulativeProb);
+                    system.InterarrivalDistribution.Add(t);
+                }
+
+                Dictionary<int, Dictionary<int, double>> serviceDistributions = new Dictionary<int, Dictionary<int, double>>();
+                cummulativeProb = 0;
+                int lineIndex = 8;
+                for (int serverIndex = 1; serverIndex <= system.NumberOfServers; serverIndex++)
+                { 
+                    Server myNewServer = new Server();
+                    myNewServer.ID = serverIndex;
+                    //while (system.InterarrivalDistribution[system.InterarrivalDistribution.Count - 1].CummProbability < 1 && lineIndex < lines.Count)
+                    for(int j = 1 ; j <= 4; j++)
+                    {
+                        string[] parts = lines[lineIndex].Split(',');
+                        TimeDistribution t = CreateTimeDistribution(int.Parse(parts[0].Trim()), decimal.Parse(parts[1].Trim()), ref cummulativeProb);
+                        myNewServer.TimeDistribution.Add(t);
+                        lineIndex++;
+                    }
+                    system.Servers.Add(myNewServer);
+                }
+            }
+            DrawTable();
+        }
+
+        
 
         private void button4_Click(object sender, EventArgs e) // RUN
         {
@@ -244,29 +271,38 @@ namespace MultiQueueSimulation
             DrawTable();
         }
         List<(int, int)> availableServers = new List<(int, int)>();
-        public int CheckForServer(int arrivalTime)
+        List<(int, int)> busyServers = new List<(int, int)>();
+        public (int, int) CheckForServer(int arrivalTime)
         {
             availableServers.Clear();
+            busyServers.Clear();
             //Based on Priority 
             for (int i = 0; i < system.Servers.Count; i++)
             {
                 if (system.Servers[i].FinishTime <= arrivalTime)
                     availableServers.Add((system.Servers[i].ID, system.Servers[i].FinishTime));
             }
-            if (availableServers.Count == 0) // based on the first server will be available
-                availableServers.Sort((x, y) => x.Item2.CompareTo(y.Item2));
-            else                             // based on Priority
+            if (availableServers.Count != 0)// based on Priority
+            {
                 availableServers.Sort((x, y) => x.Item1.CompareTo(y.Item1));
+                return (availableServers[0].Item1, availableServers[0].Item2);
+            }
+            else // based on the first server will be available
+            {
+                busyServers.Sort((x, y) => x.Item2.CompareTo(y.Item2));
+                return (busyServers[0].Item1, busyServers[0].Item2);
+            }
 
-            return availableServers[0].Item1;
+
         }
 
 
         public int MappingInServerlDistribution(int randomNum2, int id) // get service time
         {
-            int indexer = id--;
+            int indexer = id;
+            indexer--;
             int x = system.Servers[indexer].TimeDistribution.Count;
-            for (int i = 0; i <= x; i++)//////// OUT OF RANGE ERROR
+            for (int i = 0; i < x; i++)//////// OUT OF RANGE ERROR
             {
                 if (randomNum2 >= system.Servers[indexer].TimeDistribution[i].MinRange && randomNum2 <= system.Servers[indexer].TimeDistribution[i].MaxRange)
                     return system.Servers[indexer].TimeDistribution[i].Time;
@@ -322,7 +358,7 @@ namespace MultiQueueSimulation
 
 
 
-                
+
                 if (i == 1)
                 {
                     num = 0;
@@ -333,9 +369,8 @@ namespace MultiQueueSimulation
 
                 //Server
                 int serviceBegin = 0, serviceEnd = 0, serviceTime = 0, queueTime = 0, serverIndex = 1;
-                if (i != 1)
-                serverIndex = CheckForServer(ArrivalTime);
-                serviceTime = MappingInServerlDistribution(num2, serverIndex);
+
+
                 //////////////////////////////////
 
                 if (i == 1)
@@ -348,9 +383,22 @@ namespace MultiQueueSimulation
                 }
                 else
                 {
-                    serviceBegin = Math.Max(system.Servers[serverIndex].FinishTime, ArrivalTime);
-                    availableServers.Sort((x, y) => x.Item2.CompareTo(y.Item2));
-                    queueTime = serviceBegin - availableServers[0].Item2;
+                    serverIndex = CheckForServer(ArrivalTime).Item1;
+
+                    //Service Info
+                    serviceBegin = Math.Max(CheckForServer(ArrivalTime).Item2, ArrivalTime);
+                    serviceTime = MappingInServerlDistribution(num2, serverIndex);
+                    serviceEnd = serviceTime + serviceBegin;
+                   
+                    //Queue Time
+                    if(serviceBegin > ArrivalTime)
+                        queueTime = serviceBegin - ArrivalTime;
+                    else
+                        queueTime = 0;
+                    
+                    //Setting the finish time for server
+                    system.Servers[serverIndex - 1].FinishTime = serviceEnd;
+
                 }
 
                 string[] theData = new string[]
@@ -364,7 +412,7 @@ namespace MultiQueueSimulation
 
                     serviceBegin.ToString(),//time service begin 
                     serviceTime.ToString(),//service time : mapping in server distribution
-                    (serviceTime+serviceBegin).ToString(),//time service end : time service begin + service time
+                    serviceEnd.ToString(),//time service end : time service begin + service time
                     queueTime.ToString(),//time in queue : smallest end time in all servers - time of arrival(accumulationThing)
                     serverIndex.ToString()//server index : based on pirority then idelitiy
                 };
