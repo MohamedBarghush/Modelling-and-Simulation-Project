@@ -212,17 +212,18 @@ namespace MultiQueueSimulation
                 var fileLocation = File.ReadAllLines(file.FileName);
                 List<string> lines = new List<string>(fileLocation);
 
-                lines = FilterLines(lines);
+                lines = FilterLines(lines); //Lines Filteration
 
                 system.NumberOfServers = int.Parse(lines[0]);
                 system.StoppingNumber = int.Parse(lines[1]);
                 system.StoppingCriteria = (Enums.StoppingCriteria)int.Parse(lines[2]);
                 system.SelectionMethod = (Enums.SelectionMethod)int.Parse(lines[3]);
 
-                int linesForEachDistribution = (lines.Count-3) /(system.NumberOfServers+1);
+                //Number of lines in each distribution 
+                int linesForEachDistribution = (lines.Count - 3) / (system.NumberOfServers + 1);// can NOT process Test case 3
 
                 decimal cummulativeProb = 0;
-                for (int i = 4; i < 8; i++)
+                for (int i = 4; i < 4 + linesForEachDistribution; i++)
                 {
                     string[] parts = lines[i].Split(',');
                     TimeDistribution t = CreateTimeDistribution(int.Parse(parts[0].Trim()), decimal.Parse(parts[1].Trim()), ref cummulativeProb);
@@ -233,11 +234,11 @@ namespace MultiQueueSimulation
                 cummulativeProb = 0;
                 int lineIndex = 8;
                 for (int serverIndex = 1; serverIndex <= system.NumberOfServers; serverIndex++)
-                { 
+                {
                     Server myNewServer = new Server();
                     myNewServer.ID = serverIndex;
                     //while (system.InterarrivalDistribution[system.InterarrivalDistribution.Count - 1].CummProbability < 1 && lineIndex < lines.Count)
-                    for(int j = 1 ; j <= 4; j++)
+                    for (int j = 1; j <= linesForEachDistribution; j++)
                     {
                         string[] parts = lines[lineIndex].Split(',');
                         TimeDistribution t = CreateTimeDistribution(int.Parse(parts[0].Trim()), decimal.Parse(parts[1].Trim()), ref cummulativeProb);
@@ -250,7 +251,7 @@ namespace MultiQueueSimulation
             DrawTable();
         }
 
-        
+
 
         private void button4_Click(object sender, EventArgs e) // RUN
         {
@@ -302,7 +303,7 @@ namespace MultiQueueSimulation
             int indexer = id;
             indexer--;
             int x = system.Servers[indexer].TimeDistribution.Count;
-            for (int i = 0; i < x; i++)//////// OUT OF RANGE ERROR
+            for (int i = 0; i < x; i++)
             {
                 if (randomNum2 >= system.Servers[indexer].TimeDistribution[i].MinRange && randomNum2 <= system.Servers[indexer].TimeDistribution[i].MaxRange)
                     return system.Servers[indexer].TimeDistribution[i].Time;
@@ -316,7 +317,7 @@ namespace MultiQueueSimulation
         private void DrawTable()
         {
             Form tableView = new Form();
-            tableView.Width = 1600;
+            tableView.Width = 1350;
             tableView.Height = 1000;
 
             List<int> serviceTimeEnd = new List<int>();
@@ -389,13 +390,13 @@ namespace MultiQueueSimulation
                     serviceBegin = Math.Max(CheckForServer(ArrivalTime).Item2, ArrivalTime);
                     serviceTime = MappingInServerlDistribution(num2, serverIndex);
                     serviceEnd = serviceTime + serviceBegin;
-                   
+
                     //Queue Time
-                    if(serviceBegin > ArrivalTime)
+                    if (serviceBegin > ArrivalTime)
                         queueTime = serviceBegin - ArrivalTime;
                     else
                         queueTime = 0;
-                    
+
                     //Setting the finish time for server
                     system.Servers[serverIndex - 1].FinishTime = serviceEnd;
 
