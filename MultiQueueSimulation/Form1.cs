@@ -14,6 +14,9 @@ using MultiQueueModels;
 using MultiQueueTesting;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Windows.Forms.DataVisualization.Charting;
+
+
 namespace MultiQueueSimulation
 {
     public partial class Form1 : Form
@@ -252,7 +255,32 @@ namespace MultiQueueSimulation
         }
 
 
+        public void DrawChart()
+        {
+            // Create a new chart object.
+            Chart chart = new Chart();
 
+            // Add a new series to the chart.
+            Series series = new Series();
+
+            // Add the data points to the series.
+            series.Points.Add(new DataPoint(1, 1));
+            series.Points.Add(new DataPoint(2, 1));
+            series.Points.Add(new DataPoint(3, 0));
+            series.Points.Add(new DataPoint(4, 1));
+            series.Points.Add(new DataPoint(5, 0));
+
+            // Add the series to the chart.
+            chart.Series.Add(series);
+
+            // Set the chart title and axis labels.
+            chart.Titles.Add("My Chart");
+            chart.ChartAreas[0].AxisX.Title = "X Axis";
+            chart.ChartAreas[0].AxisY.Title = "Y Axis";
+
+            // Display the chart.
+            chart.Show();
+        }
         private void button4_Click(object sender, EventArgs e) // RUN
         {
             system.NumberOfServers = int.Parse(numOfServersText.Text);
@@ -270,10 +298,13 @@ namespace MultiQueueSimulation
                 system.SelectionMethod = Enums.SelectionMethod.LeastUtilization;
 
             DrawTable();
+
+            DrawChart();
+
         }
         List<(int, int)> availableServers = new List<(int, int)>();
         List<(int, int)> busyServers = new List<(int, int)>();
-        public (int, int) CheckForServer(int arrivalTime)
+        public (int, int) CheckForServer(int arrivalTime, int index)
         {
             availableServers.Clear();
             busyServers.Clear();
@@ -281,7 +312,15 @@ namespace MultiQueueSimulation
             for (int i = 0; i < system.Servers.Count; i++)
             {
                 if (system.Servers[i].FinishTime <= arrivalTime)
+                {
                     availableServers.Add((system.Servers[i].ID, system.Servers[i].FinishTime));
+                    system.Servers[i].Graph.Add((index, 1));
+                }
+                else if (system.Servers[i].FinishTime > arrivalTime)
+                {
+                    busyServers.Add((system.Servers[i].ID, system.Servers[i].FinishTime));
+                    system.Servers[i].Graph.Add((index, 0));
+                }
             }
             if (availableServers.Count != 0)// based on Priority
             {
@@ -310,9 +349,6 @@ namespace MultiQueueSimulation
             }
             return 1;
         }
-
-
-
 
         private void DrawTable()
         {
@@ -384,10 +420,10 @@ namespace MultiQueueSimulation
                 }
                 else
                 {
-                    serverIndex = CheckForServer(ArrivalTime).Item1;
+                    serverIndex = CheckForServer(ArrivalTime, i).Item1;
 
                     //Service Info
-                    serviceBegin = Math.Max(CheckForServer(ArrivalTime).Item2, ArrivalTime);
+                    serviceBegin = Math.Max(CheckForServer(ArrivalTime, i).Item2, ArrivalTime);
                     serviceTime = MappingInServerlDistribution(num2, serverIndex);
                     serviceEnd = serviceTime + serviceBegin;
 
@@ -433,6 +469,62 @@ namespace MultiQueueSimulation
                 system.Servers.RemoveAt(index);
             }
         }
+
+        private void button3_Click_1(object sender, EventArgs e)
+        {
+            for (int i = 0; i < system.Servers.Count; i++)
+            {
+                Form chartView = new Form();
+                chartView.Width = 1200;
+                chartView.Height = 600;
+
+                // Create a Chart control
+                Chart chart = new Chart();
+                chart.Width = chartView.Width;
+                chart.Height = chartView.Height;
+
+                // Add the chart to the form
+                chartView.Controls.Add(chart);
+
+                // Create a ChartArea and add it to the chart
+                ChartArea chartArea = new ChartArea("MyChartArea");
+                chart.ChartAreas.Add(chartArea);
+
+                // Create a Series and add data points to the series
+                Series series = new Series("MySeries");
+
+                for (int j = 0; j < system.Servers[i].Graph.Count; j++)
+                {
+                    series.Points.AddXY(system.Servers[i].Graph[j].Item1, system.Servers[i].Graph[j].Item2);
+                }
+
+                // Add the series to the chart
+                chart.Series.Add(series);
+
+                // Customize the chart as needed
+                // Customize the X-axis
+                chartArea.AxisX.Title = "X Axis";
+                chartArea.AxisX.MajorGrid.Enabled = false; // Hide major gridlines
+
+                foreach (var dataPoint in system.Servers[i].Graph)
+                {
+                    chartArea.AxisX.CustomLabels.Add(dataPoint.Item1 - 0.5, dataPoint.Item1 + 0.5, dataPoint.Item1.ToString());
+                }
+
+                // Customize the Y-axis
+                chartArea.AxisY.Title = "Y Axis";
+                chartArea.AxisY.Minimum = 0; // Set the minimum value
+                chartArea.AxisY.Maximum = 1; // Set the maximum value
+                chartArea.AxisY.Interval = 1; // Set the interval
+
+                // Show the chart in an independent window
+                chartView.ShowDialog();
+
+            }
+
+        }
     }
 }
 
+
+    
