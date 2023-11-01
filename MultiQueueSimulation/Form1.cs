@@ -210,9 +210,9 @@ namespace MultiQueueSimulation
             if (file.ShowDialog() == DialogResult.OK)
             {
                 var fileLocation = File.ReadAllLines(file.FileName);
-                List<string> lines = new List<string>(fileLocation);
-
-                lines = FilterLines(lines); //Lines Filteration
+                List<string> input = new List<string>(fileLocation);
+                List<string> lines = new List<string>();
+                lines = FilterLines(input); //Lines Filteration
 
                 system.NumberOfServers = int.Parse(lines[0]);
                 system.StoppingNumber = int.Parse(lines[1]);
@@ -232,7 +232,7 @@ namespace MultiQueueSimulation
 
                 Dictionary<int, Dictionary<int, double>> serviceDistributions = new Dictionary<int, Dictionary<int, double>>();
                 cummulativeProb = 0;
-                int lineIndex = 8;
+                int lineIndex = 4 + linesForEachDistribution;
                 for (int serverIndex = 1; serverIndex <= system.NumberOfServers; serverIndex++)
                 {
                     Server myNewServer = new Server();

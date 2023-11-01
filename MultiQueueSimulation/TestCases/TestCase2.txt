@@ -28,9 +28,8 @@ ServiceDistribution_Server3
 
 ServiceDistribution_Server4
 7, 0.1
-8, 0.9 
+8, 0.9
 
 ServiceDistribution_Server5
 9, 0.1
-10, 0.9 
-
+10, 0.9
