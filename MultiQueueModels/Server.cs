@@ -11,6 +11,7 @@ namespace MultiQueueModels
         public Server()
         {
             this.TimeDistribution = new List<TimeDistribution>();
+            this.Graph = new List<(int, int)>();
             FinishTime = 0;
         }
 
@@ -24,5 +25,7 @@ namespace MultiQueueModels
         //optional if needed use them
         public int FinishTime { get; set; }
         public int TotalWorkingTime { get; set; }
+
+        public List<(int, int)> Graph;
     }
 }
