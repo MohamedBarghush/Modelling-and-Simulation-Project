@@ -28,5 +28,13 @@ namespace MultiQueueModels
         public List<SimulationCase> SimulationTable { get; set; }
         public PerformanceMeasures PerformanceMeasures { get; set; }
 
+        ////////////// FUNCTIONS /////////
+        public void ClearData()
+        {
+            Servers.Clear(); 
+            InterarrivalDistribution.Clear();
+            SimulationTable.Clear();
+        }
+
     }
 }

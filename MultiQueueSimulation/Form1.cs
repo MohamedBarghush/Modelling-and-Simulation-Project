@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using MultiQueueModels;
 using MultiQueueTesting;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 namespace MultiQueueSimulation
 {
@@ -231,10 +230,10 @@ namespace MultiQueueSimulation
                 }
 
                 Dictionary<int, Dictionary<int, double>> serviceDistributions = new Dictionary<int, Dictionary<int, double>>();
-                cummulativeProb = 0;
                 int lineIndex = 4 + linesForEachDistribution;
                 for (int serverIndex = 1; serverIndex <= system.NumberOfServers; serverIndex++)
                 {
+                    cummulativeProb = 0;
                     Server myNewServer = new Server();
                     myNewServer.ID = serverIndex;
                     //while (system.InterarrivalDistribution[system.InterarrivalDistribution.Count - 1].CummProbability < 1 && lineIndex < lines.Count)
@@ -269,6 +268,8 @@ namespace MultiQueueSimulation
             else if (selectionMethodText.Text == "3")
                 system.SelectionMethod = Enums.SelectionMethod.LeastUtilization;
 
+            system.ClearData();
+
             DrawTable();
         }
         List<(int, int)> availableServers = new List<(int, int)>();
@@ -288,25 +289,32 @@ namespace MultiQueueSimulation
                 availableServers.Sort((x, y) => x.Item1.CompareTo(y.Item1));
                 return (availableServers[0].Item1, availableServers[0].Item2);
             }
-            else // based on the first server will be available
+            else if (busyServers.Count != 0) // Check if busyServers has elements
             {
                 busyServers.Sort((x, y) => x.Item2.CompareTo(y.Item2));
                 return (busyServers[0].Item1, busyServers[0].Item2);
             }
-
-
+            else
+            {
+                // Return default values or handle the situation when both availableServers and busyServers are empty
+                return (0, 0); // Return default values or handle the situation accordingly
+            }
         }
+
 
 
         public int MappingInServerlDistribution(int randomNum2, int id) // get service time
         {
-            int indexer = id;
-            indexer--;
-            int x = system.Servers[indexer].TimeDistribution.Count;
-            for (int i = 0; i < x; i++)
+            int indexer = id - 1; // Adjust index to match the server ID
+            if (indexer >= 0 && indexer < system.Servers.Count) // Check if indexer is within the valid range
             {
-                if (randomNum2 >= system.Servers[indexer].TimeDistribution[i].MinRange && randomNum2 <= system.Servers[indexer].TimeDistribution[i].MaxRange)
-                    return system.Servers[indexer].TimeDistribution[i].Time;
+                foreach (var timeDistribution in system.Servers[indexer].TimeDistribution)
+                {
+                    if (randomNum2 >= timeDistribution.MinRange && randomNum2 <= timeDistribution.MaxRange)
+                    {
+                        return timeDistribution.Time;
+                    }
+                }
             }
             return 1;
         }
@@ -339,7 +347,7 @@ namespace MultiQueueSimulation
             }
             int ArrivalTime = 0;
             Random randomNum = new Random();
-            for (int i = 1; i < system.StoppingNumber; i++)
+            for (int i = 1; i <= system.StoppingNumber; i++)
             {
                 int num = randomNum.Next(1, 100);
                 int timeBetweenArrival = 0;
@@ -374,16 +382,17 @@ namespace MultiQueueSimulation
 
                 //////////////////////////////////
 
-                if (i == 1)
+                /*if (i == 1)
                 {
                     serviceBegin = 0;
                     serverIndex = 1;
+                    // Ensure the first server's finish time is updated correctly
                     system.Servers[0].FinishTime = serviceTime;
                     serviceTimeEnd.Add(serviceTime);
                     queueTime = 0;
                 }
                 else
-                {
+                {*/
                     serverIndex = CheckForServer(ArrivalTime).Item1;
 
                     //Service Info
@@ -400,7 +409,7 @@ namespace MultiQueueSimulation
                     //Setting the finish time for server
                     system.Servers[serverIndex - 1].FinishTime = serviceEnd;
 
-                }
+                //}
 
                 string[] theData = new string[]
                 {
@@ -419,6 +428,17 @@ namespace MultiQueueSimulation
                 };
 
                 data.Rows.Add(theData);
+                SimulationCase aCase = new SimulationCase(i, 
+                                                          num, 
+                                                          timeBetweenArrival, 
+                                                          ArrivalTime, 
+                                                          num2, 
+                                                          serviceTime, 
+                                                          system.Servers[serverIndex - 1], 
+                                                          serviceBegin, 
+                                                          serviceEnd,
+                                                          queueTime);
+                system.SimulationTable.Add(aCase);
             }
 
             tableView.Controls.Add(data);
@@ -427,7 +447,7 @@ namespace MultiQueueSimulation
 
         private void clear_server_Click(object sender, EventArgs e)
         {
-            int index = system.Servers.FindIndex(item => item.ID == int.Parse(id_field.Text));
+            int index = system.Servers.FindIndex(item => item.ID == int.Parse(id_field.Text)-1);
             if (index != -1)
             {
                 system.Servers.RemoveAt(index);

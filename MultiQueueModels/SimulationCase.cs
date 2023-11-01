@@ -13,6 +13,20 @@ namespace MultiQueueModels
             this.AssignedServer = new Server();
         }
 
+        public SimulationCase(int CustomerNumber, int RandomInterArrival, int InterArrival, int ArrivalTime, int RandomService, int ServiceTime, Server AssignedServer, int StartTime, int EndTime, int TimeInQueue)
+        {
+            this.CustomerNumber = CustomerNumber;
+            this.RandomInterArrival = RandomInterArrival;
+            this.InterArrival = InterArrival;
+            this.ArrivalTime = ArrivalTime;
+            this.RandomService = RandomService;
+            this.ServiceTime = ServiceTime;
+            this.AssignedServer = AssignedServer;
+            this.StartTime = StartTime;
+            this.EndTime = EndTime;
+            this.TimeInQueue = TimeInQueue;
+        }
+
         public int CustomerNumber { get; set; }
         public int RandomInterArrival { get; set; }
         public int InterArrival { get; set; }

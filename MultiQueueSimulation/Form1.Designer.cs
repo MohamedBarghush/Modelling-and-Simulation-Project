@@ -41,6 +41,10 @@
             this.listBox3 = new System.Windows.Forms.ListBox();
             this.listBox4 = new System.Windows.Forms.ListBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.clear_server = new System.Windows.Forms.Button();
+            this.label21 = new System.Windows.Forms.Label();
+            this.id_field = new System.Windows.Forms.TextBox();
+            this.label15 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.server_time_field = new System.Windows.Forms.TextBox();
@@ -58,16 +62,12 @@
             this.selectionMethodText = new System.Windows.Forms.TextBox();
             this.Run = new System.Windows.Forms.Button();
             this.label14 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
-            this.id_field = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
             this.id_label = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
-            this.label21 = new System.Windows.Forms.Label();
-            this.clear_server = new System.Windows.Forms.Button();
             this.label22 = new System.Windows.Forms.Label();
             this.listBox5 = new System.Windows.Forms.ListBox();
             this.label23 = new System.Windows.Forms.Label();
@@ -212,6 +212,43 @@
             this.groupBox2.Text = "Server";
             this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
             // 
+            // clear_server
+            // 
+            this.clear_server.Location = new System.Drawing.Point(25, 128);
+            this.clear_server.Name = "clear_server";
+            this.clear_server.Size = new System.Drawing.Size(75, 23);
+            this.clear_server.TabIndex = 34;
+            this.clear_server.Text = "Clear";
+            this.clear_server.UseVisualStyleBackColor = true;
+            this.clear_server.Click += new System.EventHandler(this.clear_server_Click);
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label21.Location = new System.Drawing.Point(16, 20);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(147, 24);
+            this.label21.TabIndex = 33;
+            this.label21.Text = "Servers values";
+            // 
+            // id_field
+            // 
+            this.id_field.Location = new System.Drawing.Point(115, 49);
+            this.id_field.Name = "id_field";
+            this.id_field.Size = new System.Drawing.Size(100, 20);
+            this.id_field.TabIndex = 1;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label15.Location = new System.Drawing.Point(20, 48);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(69, 18);
+            this.label15.TabIndex = 7;
+            this.label15.Text = "Server ID";
+            // 
             // label7
             // 
             this.label7.AutoSize = true;
@@ -237,21 +274,21 @@
             this.server_time_field.Location = new System.Drawing.Point(115, 74);
             this.server_time_field.Name = "server_time_field";
             this.server_time_field.Size = new System.Drawing.Size(100, 20);
-            this.server_time_field.TabIndex = 3;
+            this.server_time_field.TabIndex = 2;
             // 
             // server_prob_field
             // 
             this.server_prob_field.Location = new System.Drawing.Point(115, 102);
             this.server_prob_field.Name = "server_prob_field";
             this.server_prob_field.Size = new System.Drawing.Size(100, 20);
-            this.server_prob_field.TabIndex = 2;
+            this.server_prob_field.TabIndex = 3;
             // 
             // server_add
             // 
             this.server_add.Location = new System.Drawing.Point(127, 128);
             this.server_add.Name = "server_add";
             this.server_add.Size = new System.Drawing.Size(75, 23);
-            this.server_add.TabIndex = 0;
+            this.server_add.TabIndex = 4;
             this.server_add.Text = "Add";
             this.server_add.UseVisualStyleBackColor = true;
             this.server_add.Click += new System.EventHandler(this.button3_Click);
@@ -321,28 +358,28 @@
             this.numOfServersText.Location = new System.Drawing.Point(262, 24);
             this.numOfServersText.Name = "numOfServersText";
             this.numOfServersText.Size = new System.Drawing.Size(100, 20);
-            this.numOfServersText.TabIndex = 21;
+            this.numOfServersText.TabIndex = 1;
             // 
             // stoppinNumText
             // 
             this.stoppinNumText.Location = new System.Drawing.Point(262, 59);
             this.stoppinNumText.Name = "stoppinNumText";
             this.stoppinNumText.Size = new System.Drawing.Size(100, 20);
-            this.stoppinNumText.TabIndex = 22;
+            this.stoppinNumText.TabIndex = 2;
             // 
             // stoppingCriteriaText
             // 
             this.stoppingCriteriaText.Location = new System.Drawing.Point(262, 98);
             this.stoppingCriteriaText.Name = "stoppingCriteriaText";
             this.stoppingCriteriaText.Size = new System.Drawing.Size(100, 20);
-            this.stoppingCriteriaText.TabIndex = 23;
+            this.stoppingCriteriaText.TabIndex = 3;
             // 
             // selectionMethodText
             // 
             this.selectionMethodText.Location = new System.Drawing.Point(262, 141);
             this.selectionMethodText.Name = "selectionMethodText";
             this.selectionMethodText.Size = new System.Drawing.Size(100, 20);
-            this.selectionMethodText.TabIndex = 24;
+            this.selectionMethodText.TabIndex = 4;
             // 
             // Run
             // 
@@ -363,23 +400,6 @@
             this.label14.Size = new System.Drawing.Size(184, 24);
             this.label14.TabIndex = 26;
             this.label14.Text = "Read data from file";
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label15.Location = new System.Drawing.Point(20, 48);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(69, 18);
-            this.label15.TabIndex = 7;
-            this.label15.Text = "Server ID";
-            // 
-            // id_field
-            // 
-            this.id_field.Location = new System.Drawing.Point(115, 49);
-            this.id_field.Name = "id_field";
-            this.id_field.Size = new System.Drawing.Size(100, 20);
-            this.id_field.TabIndex = 8;
             // 
             // label16
             // 
@@ -439,26 +459,6 @@
             this.label20.Size = new System.Drawing.Size(95, 15);
             this.label20.TabIndex = 31;
             this.label20.Text = "Interarrival Time";
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label21.Location = new System.Drawing.Point(16, 20);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(147, 24);
-            this.label21.TabIndex = 33;
-            this.label21.Text = "Servers values";
-            // 
-            // clear_server
-            // 
-            this.clear_server.Location = new System.Drawing.Point(25, 128);
-            this.clear_server.Name = "clear_server";
-            this.clear_server.Size = new System.Drawing.Size(75, 23);
-            this.clear_server.TabIndex = 34;
-            this.clear_server.Text = "Clear";
-            this.clear_server.UseVisualStyleBackColor = true;
-            this.clear_server.Click += new System.EventHandler(this.clear_server_Click);
             // 
             // label22
             // 
