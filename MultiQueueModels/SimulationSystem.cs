@@ -31,10 +31,9 @@ namespace MultiQueueModels
         ////////////// FUNCTIONS /////////
         public void ClearData()
         {
-            Servers.Clear(); 
+            Servers.Clear();
             InterarrivalDistribution.Clear();
             SimulationTable.Clear();
         }
-
     }
 }

@@ -23,6 +23,11 @@ namespace MultiQueueSimulation
         public int interArrivalTime;
         public int interArrivalProp;
 
+        private decimal totalQueueTime = 0;
+        private int maxQueue = 0;
+        private int customersWhoWaited = 0;
+        private List<int> maxQueueList = new List<int>();
+
         public TimeDistribution interArrivalDistribution;
         public SimulationSystem system = new SimulationSystem();
 
@@ -239,8 +244,7 @@ namespace MultiQueueSimulation
                     cummulativeProb = 0;
                     Server myNewServer = new Server();
                     myNewServer.ID = serverIndex;
-                    //while (system.InterarrivalDistribution[system.InterarrivalDistribution.Count - 1].CummProbability < 1 && lineIndex < lines.Count)
-                    for (int j = 1; j <= linesForEachDistribution; j++)
+                    while (cummulativeProb < 1 && lineIndex < lines.Count)
                     {
                         string[] parts = lines[lineIndex].Split(',');
                         TimeDistribution t = CreateTimeDistribution(int.Parse(parts[0].Trim()), decimal.Parse(parts[1].Trim()), ref cummulativeProb);
@@ -364,7 +368,7 @@ namespace MultiQueueSimulation
             tableView.Width = 1350;
             tableView.Height = 1000;
 
-            List<int> serviceTimeEnd = new List<int>();
+            // List<int> serviceTimeEnd = new List<int>();
 
             DataGridView data = new DataGridView();
             data.Width = tableView.Width;
@@ -372,7 +376,6 @@ namespace MultiQueueSimulation
             DataGridViewCellStyle columnHeaderStyle = new DataGridViewCellStyle();
             columnHeaderStyle.BackColor = Color.White;
             columnHeaderStyle.Font = new Font("Monospace", 8, FontStyle.Bold);
-            //data.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
             data.ColumnHeadersDefaultCellStyle = columnHeaderStyle;
             data.ColumnHeadersVisible = true;
             string[] columns = new string[] { "Customer No.", "Random Digits for Arrival", "Time between Arrivals", "Clock Time of Arrival", "Random Digits for Service", "Time Service Begins", "Service Time", "Time Service Ends", "Time in Queue", "Server Index" };
@@ -417,35 +420,23 @@ namespace MultiQueueSimulation
 
 
                 //////////////////////////////////
+                serverIndex = CheckForServer(ArrivalTime, i).Item1;
 
-                /*if (i == 1)
-                {
-                    serviceBegin = 0;
-                    serverIndex = 1;
-                    // Ensure the first server's finish time is updated correctly
-                    system.Servers[0].FinishTime = serviceTime;
-                    serviceTimeEnd.Add(serviceTime);
-                    queueTime = 0;
-                }
+                //Service Info
+                serviceBegin = Math.Max(CheckForServer(ArrivalTime, i).Item2, ArrivalTime);
+                serviceTime = MappingInServerlDistribution(num2, serverIndex);
+                serviceEnd = serviceTime + serviceBegin;
+
+                //Queue Time
+                if (serviceBegin > ArrivalTime)
+                    queueTime = serviceBegin - ArrivalTime;
                 else
-                {
-                    serverIndex = CheckForServer(ArrivalTime, i).Item1;
+                    queueTime = 0;
 
-                    //Service Info
-                    serviceBegin = Math.Max(CheckForServer(ArrivalTime, i).Item2, ArrivalTime);
-                    serviceTime = MappingInServerlDistribution(num2, serverIndex);
-                    serviceEnd = serviceTime + serviceBegin;
+                //Setting the finish time for server
+                system.Servers[serverIndex - 1].FinishTime = serviceEnd;
+                system.Servers[serverIndex - 1].TotalWorkingTime += serviceTime;
 
-                    //Queue Time
-                    if (serviceBegin > ArrivalTime)
-                        queueTime = serviceBegin - ArrivalTime;
-                    else
-                        queueTime = 0;
-
-                    //Setting the finish time for server
-                    system.Servers[serverIndex - 1].FinishTime = serviceEnd;
-
-                //}
 
                 string[] theData = new string[]
                 {
@@ -463,6 +454,25 @@ namespace MultiQueueSimulation
                     serverIndex.ToString()//server index : based on pirority then idelitiy
                 };
 
+                totalQueueTime += queueTime;
+                if (queueTime > 0)
+                {
+                    maxQueue++;
+                    customersWhoWaited++;
+                }
+                else 
+                {
+                    maxQueueList.Add(maxQueue);
+                    maxQueue = 0;
+                }
+
+                if (i == 1)
+                {
+                    theData[1] = "-";
+                    theData[2] = "-";
+                    num = 1;
+                }
+
                 data.Rows.Add(theData);
                 SimulationCase aCase = new SimulationCase(i, 
                                                           num, 
@@ -477,8 +487,17 @@ namespace MultiQueueSimulation
                 system.SimulationTable.Add(aCase);
             }
 
+            foreach (Server server in system.Servers)
+            {
+                server.AverageServiceTime = server.TotalWorkingTime / system.StoppingNumber;
+                server.IdleProbability = (system.SimulationTable[system.SimulationTable.Count-1].EndTime - server.TotalWorkingTime) / system.SimulationTable[system.SimulationTable.Count-1].EndTime;
+                server.Utilization = server.TotalWorkingTime / system.SimulationTable[system.SimulationTable.Count-1].EndTime;
+            }
+
             tableView.Controls.Add(data);
             tableView.ShowDialog();
+
+            PerformanceTesting();
         }
 
         private void clear_server_Click(object sender, EventArgs e)
@@ -542,6 +561,13 @@ namespace MultiQueueSimulation
 
             }
 
+        }
+
+        private void PerformanceTesting ()
+        {
+            system.PerformanceMeasures.AverageWaitingTime = (decimal)totalQueueTime / (decimal)system.StoppingNumber;
+            system.PerformanceMeasures.MaxQueueLength = maxQueueList.Max();
+            system.PerformanceMeasures.WaitingProbability = (decimal)customersWhoWaited / (decimal)system.StoppingNumber;
         }
     }
 }
