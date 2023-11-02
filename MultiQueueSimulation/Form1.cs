@@ -14,6 +14,7 @@ using MultiQueueModels;
 using MultiQueueTesting;
 using System.Text.RegularExpressions;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.Collections;
 
 
 namespace MultiQueueSimulation
@@ -27,6 +28,8 @@ namespace MultiQueueSimulation
         private int maxQueue = 0;
         private int customersWhoWaited = 0;
         private List<int> maxQueueList = new List<int>();
+        private Dictionary<int, int> queueStuff = new Dictionary<int, int>();
+        private int maxDictSize = 0;
 
         public TimeDistribution interArrivalDistribution;
         public SimulationSystem system = new SimulationSystem();
@@ -260,28 +263,22 @@ namespace MultiQueueSimulation
 
         public void DrawChart()
         {
-            // Create a new chart object.
             Chart chart = new Chart();
 
-            // Add a new series to the chart.
             Series series = new Series();
 
-            // Add the data points to the series.
             series.Points.Add(new DataPoint(1, 1));
             series.Points.Add(new DataPoint(2, 1));
             series.Points.Add(new DataPoint(3, 0));
             series.Points.Add(new DataPoint(4, 1));
             series.Points.Add(new DataPoint(5, 0));
 
-            // Add the series to the chart.
             chart.Series.Add(series);
 
-            // Set the chart title and axis labels.
             chart.Titles.Add("My Chart");
             chart.ChartAreas[0].AxisX.Title = "X Axis";
             chart.ChartAreas[0].AxisY.Title = "Y Axis";
 
-            // Display the chart.
             chart.Show();
         }
         private void button4_Click(object sender, EventArgs e) // RUN
@@ -339,8 +336,7 @@ namespace MultiQueueSimulation
             }
             else
             {
-                // Return default values or handle the situation when both availableServers and busyServers are empty
-                return (0, 0); // Return default values or handle the situation accordingly
+                return (0, 0);
             }
         }
 
@@ -436,6 +432,7 @@ namespace MultiQueueSimulation
                 //Setting the finish time for server
                 system.Servers[serverIndex - 1].FinishTime = serviceEnd;
                 system.Servers[serverIndex - 1].TotalWorkingTime += serviceTime;
+                system.Servers[serverIndex - 1].CustomersServedCount++;
 
 
                 string[] theData = new string[]
@@ -454,17 +451,41 @@ namespace MultiQueueSimulation
                     serverIndex.ToString()//server index : based on pirority then idelitiy
                 };
 
+
+                /*if(maxDictSize < queueStuff.Count())
+                {
+                    maxDictSize = queueStuff.Count();
+                }*/
+
                 totalQueueTime += queueTime;
                 if (queueTime > 0)
                 {
                     maxQueue++;
                     customersWhoWaited++;
+                    queueStuff[serviceBegin] = queueTime;
                 }
-                else 
+                else
                 {
                     maxQueueList.Add(maxQueue);
                     maxQueue = 0;
                 }
+
+
+
+                List<int> keysToRemove = new List<int>();
+                foreach (KeyValuePair<int, int> kvp in queueStuff)
+                {
+                    if (serviceBegin >= kvp.Key + kvp.Value)
+                    {
+                        keysToRemove.Add(kvp.Key);
+                    }
+                }
+
+                foreach (int key in keysToRemove)
+                {
+                    queueStuff.Remove(key);
+                }
+                maxDictSize = maxDictSize < queueStuff.Count ? queueStuff.Count : maxDictSize;
 
                 if (i == 1)
                 {
@@ -474,14 +495,14 @@ namespace MultiQueueSimulation
                 }
 
                 data.Rows.Add(theData);
-                SimulationCase aCase = new SimulationCase(i, 
-                                                          num, 
-                                                          timeBetweenArrival, 
-                                                          ArrivalTime, 
-                                                          num2, 
-                                                          serviceTime, 
-                                                          system.Servers[serverIndex - 1], 
-                                                          serviceBegin, 
+                SimulationCase aCase = new SimulationCase(i,
+                                                          num,
+                                                          timeBetweenArrival,
+                                                          ArrivalTime,
+                                                          num2,
+                                                          serviceTime,
+                                                          system.Servers[serverIndex - 1],
+                                                          serviceBegin,
                                                           serviceEnd,
                                                           queueTime);
                 system.SimulationTable.Add(aCase);
@@ -489,9 +510,9 @@ namespace MultiQueueSimulation
 
             foreach (Server server in system.Servers)
             {
-                server.AverageServiceTime = server.TotalWorkingTime / system.StoppingNumber;
-                server.IdleProbability = (system.SimulationTable[system.SimulationTable.Count-1].EndTime - server.TotalWorkingTime) / system.SimulationTable[system.SimulationTable.Count-1].EndTime;
-                server.Utilization = server.TotalWorkingTime / system.SimulationTable[system.SimulationTable.Count-1].EndTime;
+                server.AverageServiceTime = (decimal)server.TotalWorkingTime / (decimal)server.CustomersServedCount;
+                server.IdleProbability = (decimal)(system.SimulationTable[system.SimulationTable.Count - 1].EndTime - server.TotalWorkingTime) / (decimal)system.SimulationTable[system.SimulationTable.Count - 1].EndTime;
+                server.Utilization = (decimal)server.TotalWorkingTime / (decimal)system.SimulationTable[system.SimulationTable.Count - 1].EndTime;
             }
 
             tableView.Controls.Add(data);
@@ -502,7 +523,7 @@ namespace MultiQueueSimulation
 
         private void clear_server_Click(object sender, EventArgs e)
         {
-            int index = system.Servers.FindIndex(item => item.ID == int.Parse(id_field.Text)-1);
+            int index = system.Servers.FindIndex(item => item.ID == int.Parse(id_field.Text) - 1);
             if (index != -1)
             {
                 system.Servers.RemoveAt(index);
@@ -563,14 +584,13 @@ namespace MultiQueueSimulation
 
         }
 
-        private void PerformanceTesting ()
+        private void PerformanceTesting()
         {
             system.PerformanceMeasures.AverageWaitingTime = (decimal)totalQueueTime / (decimal)system.StoppingNumber;
-            system.PerformanceMeasures.MaxQueueLength = maxQueueList.Max();
+            system.PerformanceMeasures.MaxQueueLength = maxDictSize;
             system.PerformanceMeasures.WaitingProbability = (decimal)customersWhoWaited / (decimal)system.StoppingNumber;
         }
     }
 }
 
 
-    

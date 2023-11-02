@@ -25,6 +25,7 @@ namespace MultiQueueModels
         //optional if needed use them
         public int FinishTime { get; set; }
         public int TotalWorkingTime { get; set; }
+        public int CustomersServedCount { get; set; }
 
         public List<(int, int)> Graph;
     }
