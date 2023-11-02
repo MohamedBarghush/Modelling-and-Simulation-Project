@@ -396,3 +396,8 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/.vs/MultiQueueSimulation/v17/.suo
+/MultiQueueSimulation/bin/Debug/MultiQueueSimulation.exe
+/MultiQueueSimulation/bin/Debug/MultiQueueSimulation.pdb
+/MultiQueueSimulation/obj/Debug/MultiQueueSimulation.exe
+/MultiQueueSimulation/obj/Debug/MultiQueueSimulation.pdb
