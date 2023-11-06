@@ -77,6 +77,7 @@
             this.listBox7 = new System.Windows.Forms.ListBox();
             this.listBox8 = new System.Windows.Forms.ListBox();
             this.button3 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -551,9 +552,20 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click_1);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(673, 523);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(157, 50);
+            this.button1.TabIndex = 43;
+            this.button1.Text = "Performance Measures";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.ClientSize = new System.Drawing.Size(917, 605);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.label24);
             this.Controls.Add(this.label25);
@@ -655,6 +667,7 @@
         private System.Windows.Forms.ListBox listBox7;
         private System.Windows.Forms.ListBox listBox8;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button1;
     }
 }
 

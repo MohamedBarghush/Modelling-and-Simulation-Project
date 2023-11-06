@@ -31,8 +31,12 @@ namespace MultiQueueModels
         ////////////// FUNCTIONS /////////
         public void ClearData()
         {
+            NumberOfServers = 0;
+            StoppingNumber = 0;
             Servers.Clear();
             InterarrivalDistribution.Clear();
+            StoppingCriteria = 0;
+            SelectionMethod = 0;
             SimulationTable.Clear();
         }
     }

@@ -24,13 +24,15 @@ namespace MultiQueueSimulation
         public int interArrivalTime;
         public int interArrivalProp;
 
+        public string actualPath;
+
         private decimal totalQueueTime = 0;
         private int maxQueue = 0;
         private int customersWhoWaited = 0;
         private List<int> maxQueueList = new List<int>();
         private Dictionary<int, int> queueStuff = new Dictionary<int, int>();
         private int maxDictSize = 0;
-
+        public List<int> endTimes = new List<int>();
         public TimeDistribution interArrivalDistribution;
         public SimulationSystem system = new SimulationSystem();
 
@@ -110,6 +112,7 @@ namespace MultiQueueSimulation
 
         public SimulationSystem GetSystem()
         {
+            
             return system;
         }
 
@@ -212,6 +215,7 @@ namespace MultiQueueSimulation
         }
         private void button2_Click(object sender, EventArgs e) // Upload Input File
         {
+            //system = new SimulationSystem();
             OpenFileDialog file = new OpenFileDialog();
             file.InitialDirectory = @"C:\txt";
             file.Title = "Open a file to read data";
@@ -257,6 +261,12 @@ namespace MultiQueueSimulation
                     system.Servers.Add(myNewServer);
                 }
             }
+            //file.FileName[file.FileName.Length - 13, file.FileName.Length - 4];
+            //string[] fileName = file.FileName.Split('/');
+            //string actualName = fileName[fileName.Length - 1];
+            actualPath = file.FileName;
+            Debug.WriteLine(actualPath);
+
             DrawTable();
         }
 
@@ -296,8 +306,6 @@ namespace MultiQueueSimulation
                 system.SelectionMethod = Enums.SelectionMethod.Random;
             else if (selectionMethodText.Text == "3")
                 system.SelectionMethod = Enums.SelectionMethod.LeastUtilization;
-
-            system.ClearData();
 
             DrawTable();
 
@@ -361,15 +369,15 @@ namespace MultiQueueSimulation
         private void DrawTable()
         {
             Form tableView = new Form();
-            tableView.Width = 1350;
-            tableView.Height = 1000;
-
-            // List<int> serviceTimeEnd = new List<int>();
-
+            tableView.Width = 1150;
+            tableView.Height = 800;
             DataGridView data = new DataGridView();
-            data.Width = tableView.Width;
-            data.Height = tableView.Height;
+            data.Dock = DockStyle.Fill;
+
+
             DataGridViewCellStyle columnHeaderStyle = new DataGridViewCellStyle();
+            columnHeaderStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            data.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             columnHeaderStyle.BackColor = Color.White;
             columnHeaderStyle.Font = new Font("Monospace", 8, FontStyle.Bold);
             data.ColumnHeadersDefaultCellStyle = columnHeaderStyle;
@@ -493,7 +501,7 @@ namespace MultiQueueSimulation
                     theData[2] = "-";
                     num = 1;
                 }
-
+                endTimes.Add(serviceEnd);
                 data.Rows.Add(theData);
                 SimulationCase aCase = new SimulationCase(i,
                                                           num,
@@ -508,10 +516,16 @@ namespace MultiQueueSimulation
                 system.SimulationTable.Add(aCase);
             }
 
+
+
             foreach (Server server in system.Servers)
             {
+                if (server.CustomersServedCount == 0)
+                {
+                    server.CustomersServedCount = 1;
+                }
                 server.AverageServiceTime = (decimal)server.TotalWorkingTime / (decimal)server.CustomersServedCount;
-                server.IdleProbability = (decimal)(system.SimulationTable[system.SimulationTable.Count - 1].EndTime - server.TotalWorkingTime) / (decimal)system.SimulationTable[system.SimulationTable.Count - 1].EndTime;
+                server.IdleProbability = (decimal)(endTimes.Max() - server.TotalWorkingTime) / (decimal)endTimes.Max();
                 server.Utilization = (decimal)server.TotalWorkingTime / (decimal)system.SimulationTable[system.SimulationTable.Count - 1].EndTime;
             }
 
@@ -519,6 +533,27 @@ namespace MultiQueueSimulation
             tableView.ShowDialog();
 
             PerformanceTesting();
+
+            string[] theActualPath = actualPath.Split('\\');
+            //Debug.WriteLine(theActualPath[theActualPath.Length-1]);
+            string fileName = theActualPath[theActualPath.Length - 1];
+            char index = fileName[8];
+            string result = "";
+            if(index == '1')
+                result = TestingManager.Test(system, Constants.FileNames.TestCase1);
+            else if (index == '2')
+                result = TestingManager.Test(system, Constants.FileNames.TestCase2);
+            else if (index == '3')
+                result = TestingManager.Test(system, Constants.FileNames.TestCase3);
+            else if (index == '4')
+                result = TestingManager.Test(system, Constants.FileNames.TestCase4);
+            else if (index == '5')
+                result = TestingManager.Test(system, Constants.FileNames.TestCase5);
+
+
+            MessageBox.Show(result);
+            Application.EnableVisualStyles();
+            //Application.SetCompatibleTextRenderingDefault(false);
         }
 
         private void clear_server_Click(object sender, EventArgs e)
@@ -536,12 +571,12 @@ namespace MultiQueueSimulation
             {
                 Form chartView = new Form();
                 chartView.Width = 1200;
-                chartView.Height = 600;
-
+                chartView.Height = 700;
+                chartView.Text = "Server " + system.Servers[i].ID;
                 // Create a Chart control
                 Chart chart = new Chart();
-                chart.Width = chartView.Width;
-                chart.Height = chartView.Height;
+                chart.Width = 1200;
+                chart.Height = 450;
 
                 // Add the chart to the form
                 chartView.Controls.Add(chart);
@@ -574,9 +609,42 @@ namespace MultiQueueSimulation
                 // Customize the Y-axis
                 chartArea.AxisY.Title = "Y Axis";
                 chartArea.AxisY.Minimum = 0; // Set the minimum value
-                chartArea.AxisY.Maximum = 1; // Set the maximum value
+                chartArea.AxisY.Maximum = 1.2; // Set the maximum value
                 chartArea.AxisY.Interval = 1; // Set the interval
 
+
+                Label averageServiceTimePerServer = new Label();
+                TextBox averageServiceTimePerServerTextBox = new TextBox();
+
+                Label idleProbability = new Label();
+                TextBox idleProbabilityTextBox = new TextBox();
+
+
+
+                // Set label text
+                averageServiceTimePerServer.Text = "Average Service Time:";
+                idleProbability.Text = "Idle Probability:";
+
+                // Set text box values (you can fetch these values from your calculations)
+                averageServiceTimePerServerTextBox.Text = system.Servers[i].AverageServiceTime.ToString();
+                idleProbabilityTextBox.Text = system.Servers[i].IdleProbability.ToString();
+
+                // Set the location and size of the controls
+                averageServiceTimePerServer.Location = new Point(10, 500);
+                averageServiceTimePerServerTextBox.Location = new Point(150, 500);
+
+                idleProbability.Location = new Point(10, 550);
+                idleProbabilityTextBox.Location = new Point(150, 550);
+
+
+
+                // Add controls to the form
+                chartView.Controls.Add(averageServiceTimePerServer);
+                chartView.Controls.Add(averageServiceTimePerServerTextBox);
+
+                chartView.Controls.Add(idleProbability);
+                chartView.Controls.Add(idleProbabilityTextBox);
+                // Show the form
                 // Show the chart in an independent window
                 chartView.ShowDialog();
 
@@ -589,6 +657,55 @@ namespace MultiQueueSimulation
             system.PerformanceMeasures.AverageWaitingTime = (decimal)totalQueueTime / (decimal)system.StoppingNumber;
             system.PerformanceMeasures.MaxQueueLength = maxDictSize;
             system.PerformanceMeasures.WaitingProbability = (decimal)customersWhoWaited / (decimal)system.StoppingNumber;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Form performance = new Form();
+            performance.Width = 400;
+            performance.Height = 200;
+            performance.Text = "Performance Measures";
+
+            // Create labels and text boxes
+            Label averageWaitingTimeLabel = new Label();
+            TextBox averageWaitingTimeTextBox = new TextBox();
+
+            Label maxQueueLengthLabel = new Label();
+            TextBox maxQueueLengthTextBox = new TextBox();
+
+            Label waitingProbabilityLabel = new Label();
+            TextBox waitingProbabilityTextBox = new TextBox();
+
+            // Set label text
+            averageWaitingTimeLabel.Text = "Average Waiting Time:";
+            maxQueueLengthLabel.Text = "Max Queue Length:";
+            waitingProbabilityLabel.Text = "Waiting Probability:";
+
+            // Set text box values (you can fetch these values from your calculations)
+            averageWaitingTimeTextBox.Text = system.PerformanceMeasures.AverageWaitingTime.ToString();
+            maxQueueLengthTextBox.Text = system.PerformanceMeasures.MaxQueueLength.ToString();
+            waitingProbabilityTextBox.Text = system.PerformanceMeasures.WaitingProbability.ToString();
+
+            // Set the location and size of the controls
+            averageWaitingTimeLabel.Location = new Point(10, 10);
+            averageWaitingTimeTextBox.Location = new Point(150, 10);
+
+            maxQueueLengthLabel.Location = new Point(10, 40);
+            maxQueueLengthTextBox.Location = new Point(150, 40);
+
+            waitingProbabilityLabel.Location = new Point(10, 70);
+            waitingProbabilityTextBox.Location = new Point(150, 70);
+
+            // Add controls to the form
+            performance.Controls.Add(averageWaitingTimeLabel);
+            performance.Controls.Add(averageWaitingTimeTextBox);
+            performance.Controls.Add(maxQueueLengthLabel);
+            performance.Controls.Add(maxQueueLengthTextBox);
+            performance.Controls.Add(waitingProbabilityLabel);
+            performance.Controls.Add(waitingProbabilityTextBox);
+
+            // Show the form
+            performance.ShowDialog();
         }
     }
 }
